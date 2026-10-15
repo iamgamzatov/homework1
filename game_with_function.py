@@ -39,13 +39,22 @@ def search_problem(list, item_of_problems):
 def resursi(event, player_inventory):
     
     print(f"{event['desc']}\n1. Взять?\n2. Пройти мимо?")
-    vybor = input()
-    if vybor == '1':
+    try:
+       vybor = int(input())
+    except ValueError:
+        print("\nВведите цифры!\n")
+        return 
+    if vybor == 1:
         print('Вы подобрали: ', event['name'])
-    for resurs in player_inventory:
-        if event['name'] in resurs:
-            resurs[event['name']] += 1
-            break
+        for resurs in player_inventory:
+            if event['name'] in resurs:
+                resurs[event['name']] += 1
+                break
+    elif vybor == 2:
+        print('Вы отказалси что-либо делать!')
+    else:
+        print('\nНет такой кнопки\n')
+
 
 def print_status():
     return print(f'❤️ Health: {player['hp']} || 🎁Inventory: {player['inventory']} || 🧯\
@@ -59,18 +68,24 @@ def check_and_craft(pikua, kalinian, ref, kabula, name_event, name_comments, pro
         print_status()
         
         print(name_event)
-        vybor = input('')
+        try:
+            vybor = int(input())
+        except ValueError:
+            print("\nВведите цифры!\n")
+            return 
                         
                 
-        if vybor == '1':
+        if vybor == 1:
             player['inventory'][0]['Пикуа'] -= pikua
             player['inventory'][2]['Рефрит'] -= ref
             player['inventory'][3]['Кабула'] -= kabula
             player['inventory'][1]['Калиниан'] -= kalinian
             problems['Ваши проблемы'].remove(problem)
             return print(name_comments)
-        else:
+        elif vybor == 2:
             return print('Вы отказалси что-либо делать!')
+        else:
+            print('Нет такой кнопки, введите 1/2')
         
     else:
         return False
@@ -84,79 +99,87 @@ events = [
 
 
 cnt = 0
-for step in range(1, 100):
-    print("Проблемы: ", *problems['Ваши проблемы'])
-    if player['hp'] == 0:
-        break
-    print(f'\nШаг: {step}')
-    print_status()
-    choice = random.choice(events)
-    if choice['type'] == 'enemy':
-        print(choice['desc'])
-        print('1. Сражаться?\n2. Убежать?')
-        vybor = input()
-        if vybor == '1':
-            if 'Ефритовый меч' in player['inventory']:
-                player['hp'] = player['hp'] - 3
-                print(f"Вы сразились с монстром!\nОднако получили урон: 3")
-            else:
-                player['hp'] = player['hp'] - 6
-                print(f'У вас нет орудия, лучше вам убежать! Однако на вас подействовала радиация\nВаше здоровье = {player['hp']}')
-        else:
-            print('Вы убежали и сохранили здоровье!')
-
-    if choice['type'] in ['kalinian', 'ref', 'kabula', 'pikua']:
-        resursi(choice, player['inventory'])
-
-    if 'Ефритовый меч' not in player['inventory'] or 'Генератор, ' in problems['Ваши проблемы']:     
-        if player['inventory'][0]['Пикуа'] >= 1 and player['inventory'][1]['Калиниан'] >= 1 and \
-            player['inventory'][2]['Рефрит'] >= 1:
-            print_status()
-            print('Вы можете скрести из предметов в инвентаре меч - 1 или\
- сделать статор дле генератора - 2 | Ваш выбор(1?2?)')
-            vybor = input('')
-
-            if vybor == '1':
-                if 'Ефритовый меч' not in player['inventory']:
-                    player['inventory'].append('Ефритовый меч')
-                    print('Вы скрестили: ', player['inventory'])
-                    player['inventory'][0]['Пикуа'] -= 1
-                    player['inventory'][1]['Калиниан'] -= 1
-                    player['inventory'][2]['Рефрит'] -= 1
+try:
+    for step in range(1, 5):
+        print("Проблемы: ", *problems['Ваши проблемы'])
+        if player['hp'] == 0:
+            break
+        print(f'\nШаг: {step}')
+        print_status()
+        choice = random.choice(events)
+        if choice['type'] == 'enemy':
+            print(choice['desc'])
+            print('1. Сражаться?\n2. Убежать?')
+            try:
+                vybor = int(input())
+                if vybor == 1:
+                    if 'Ефритовый меч' in player['inventory']:
+                        player['hp'] = player['hp'] - 3
+                        print(f"Вы сразились с монстром!\nОднако получили урон: 3")
+                    else:
+                        player['hp'] = player['hp'] - 6
+                        print(f'У вас нет орудия, лучше вам убежать! Однако на вас подействовала радиация\nВаше здоровье = {player['hp']}')
+                elif vybor == 2:
+                    print('Вы убежали и сохранили здоровье!')
                 else:
-                    print('Меч уже есть! Нyжно потратить ресурсы на починку Генератора')
-            else:
-                if 'Генератор, ' in problems['Ваши проблемы']:
-                    problems['Ваши проблемы'].remove("Генератор, ")
-                    player['inventory'][0]['Пикуа'] -= 1
-                    player['inventory'][1]['Калиниан'] -= 1
-                    player['inventory'][2]['Рефрит'] -= 1
-                    print(f'Вы сделали деталь для генератора и починили его! Поздравляю\
- вас!')
-                else:
-                     print('Генератор уже починен! Вы можете сделать меч!')
-                     
-    if search_problem(problems['Ваши проблемы'], "ГБЦ, "):
-        check_and_craft(0,2,0,1, name_events[0], name_comments[0], "ГБЦ, ")
-                
-    if search_problem(problems['Ваши проблемы'], 'Стартер'):
-        check_and_craft(1,0,1,0, name_events[1], name_comments[1], "Стартер")
+                    print('Введите 1/2')
+            except ValueError:
+                print("\nВведите цифры!\n")
 
-    if not(problems['Ваши проблемы']):
-        print("\n🎉УРАААА!!!🎉 Все проблемы решены, осталось завести реактор!\n\
- 1. Ехали домой!\n 2. Остаться с монстрами")
-        home = input()
-        if home == '1':
-            engine()
-            itog = input('')
-            if itog == '1':
-                cnt_end = 100000
-                while cnt_end >= 0:
-                    cnt_end -= 1
-                    print('...........................................🚀')
-                print('\nThe End\nРеквизиты для доната и поддержки проекта........💎')
-                break
+        if choice['type'] in ['kalinian', 'ref', 'kabula', 'pikua']:
+            resursi(choice, player['inventory'])
+
+        if 'Ефритовый меч' not in player['inventory'] or 'Генератор, ' in problems['Ваши проблемы']:     
+            if player['inventory'][0]['Пикуа'] >= 1 and player['inventory'][1]['Калиниан'] >= 1 and \
+                player['inventory'][2]['Рефрит'] >= 1:
+                print_status()
+                print('Вы можете скрести из предметов в инвентаре меч - 1 или\
+    сделать статор дле генератора - 2 | Ваш выбор(1?2?)')
+                vybor = input('')
+
+                if vybor == '1':
+                    if 'Ефритовый меч' not in player['inventory']:
+                        player['inventory'].append('Ефритовый меч')
+                        print('Вы скрестили: ', player['inventory'])
+                        player['inventory'][0]['Пикуа'] -= 1
+                        player['inventory'][1]['Калиниан'] -= 1
+                        player['inventory'][2]['Рефрит'] -= 1
+                    else:
+                        print('Меч уже есть! Нyжно потратить ресурсы на починку Генератора')
+                else:
+                    if 'Генератор, ' in problems['Ваши проблемы']:
+                        problems['Ваши проблемы'].remove("Генератор, ")
+                        player['inventory'][0]['Пикуа'] -= 1
+                        player['inventory'][1]['Калиниан'] -= 1
+                        player['inventory'][2]['Рефрит'] -= 1
+                        print(f'Вы сделали деталь для генератора и починили его! Поздравляю\
+    вас!')
+                    else:
+                        print('Генератор уже починен! Вы можете сделать меч!')
+                        
+        if search_problem(problems['Ваши проблемы'], "ГБЦ, "):
+            check_and_craft(0,2,0,1, name_events[0], name_comments[0], "ГБЦ, ")
+                    
+        if search_problem(problems['Ваши проблемы'], 'Стартер'):
+            check_and_craft(1,0,1,0, name_events[1], name_comments[1], "Стартер")
+
+        if not(problems['Ваши проблемы']):
+            print("\n🎉УРАААА!!!🎉 Все проблемы решены, осталось завести реактор!\n\
+    1. Ехали домой!\n 2. Остаться с монстрами")
+            home = input()
+            if home == '1':
+                engine()
+                itog = input('')
+                if itog == '1':
+                    cnt_end = 100000
+                    while cnt_end >= 0:
+                        cnt_end -= 1
+                        print('...........................................🚀')
+                    print('\nThe End\nРеквизиты для доната и поддержки проекта........💎')
+                    break
+                else:
+                    print('Похожу ещё с монстрами, может сдружусь, женюсь......')
             else:
                 print('Похожу ещё с монстрами, может сдружусь, женюсь......')
-        else:
-            print('Похожу ещё с монстрами, может сдружусь, женюсь......')
+except KeyboardInterrupt:
+    print("\nВы вышли из игры! До встречи!")
