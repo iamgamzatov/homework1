@@ -5,7 +5,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
 
-        self.image = pygame.image.load('police.png').convert_alpha() 
+        self.image = pygame.image.load('1.png').convert_alpha() 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
@@ -31,8 +31,8 @@ class Game:
     def __init__(self):
         pygame.init
 
-        self.screen_widht = 800
-        self.screen_hight = 600
+        self.screen_widht = 1920
+        self.screen_hight = 1080
         self.screen = pygame.display.set_mode ((self.screen_widht, self.screen_hight))
         pygame.display.set_caption("Моя игра")
 
