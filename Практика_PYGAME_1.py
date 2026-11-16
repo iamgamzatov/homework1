@@ -1,5 +1,7 @@
 import pygame
 import sys
+import random
+import datetime
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
